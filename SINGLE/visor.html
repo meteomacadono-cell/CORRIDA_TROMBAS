@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Pronóstico Trombas</title>
+
+<style>
+
+body{
+  margin:0;
+  font-family:Arial, sans-serif;
+  background:#f4f6f8;
+  text-align:center;
+}
+
+h1{
+  margin:10px 0 8px 0;
+  font-size:24px;
+}
+
+.top{
+  margin-bottom:8px;
+}
+
+button{
+  padding:8px 12px;
+  margin:4px;
+  font-size:18px;
+  border-radius:8px;
+  border:1px solid #cbd5e1;
+  background:white;
+  cursor:pointer;
+}
+
+button:hover{
+  background:#eef4ff;
+}
+
+.viewer{
+  display:flex;
+  justify-content:center;
+}
+
+.viewer img{
+  max-width:95%;
+  max-height:75vh;
+  object-fit:contain;
+  border-radius:10px;
+  box-shadow:0 4px 15px rgba(0,0,0,0.2);
+}
+
+</style>
+</head>
+
+<body>
+
+<h1>Pronóstico de Probabilidad de Trombas</h1>
+
+<div class="top">
+<button onclick="prev()">⏮</button>
+<button onclick="play()">▶</button>
+<button onclick="pause()">⏸</button>
+<button onclick="next()">⏭</button>
+</div>
+
+<div class="viewer">
+<img id="img">
+</div>
+
+<script>
+
+const images=[];
+for(let i=0;i<=24;i++){
+images.push(`SINGLE/SINGLE_${String(i).padStart(3,"0")}.png`);
+}
+
+let i=0;
+let timer=null;
+
+const img=document.getElementById("img");
+
+function render(){
+img.src=images[i];
+}
+
+function next(){
+i=(i+1)%images.length;
+render();
+}
+
+function prev(){
+i=(i-1+images.length)%images.length;
+render();
+}
+
+function play(){
+clearInterval(timer);
+timer=setInterval(next,900);
+}
+
+function pause(){
+clearInterval(timer);
+timer=null;
+}
+
+render();
+play();   // 🔥 AUTO PLAY
+
+</script>
+
+</body>
+</html>

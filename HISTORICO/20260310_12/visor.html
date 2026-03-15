@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Visor Trombas - 20260310_12</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background: #f4f4f4;
+    margin: 0;
+    padding: 14px;
+    text-align: center;
+  }
+  .topbar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+  }
+  .pill {
+    font-size: 11px;
+    padding: 4px 8px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    background: #fff;
+  }
+  button {
+    padding: 6px 10px;
+    font-size: 12px;
+    border: 1px solid #bbb;
+    border-radius: 6px;
+    background: #fff;
+    cursor: pointer;
+  }
+  button:hover { background: #f0f0f0; }
+  .viewer {
+    max-width: 1100px;
+    margin: 0 auto;
+    background: #ffffff;
+    border-radius: 10px;
+    padding: 10px;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.12);
+  }
+  img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 6px;
+  }
+  .status {
+    font-size: 11px;
+    color: #333;
+    margin: 6px 0 10px;
+  }
+  input[type=range] {
+    width: 150px;
+    vertical-align: middle;
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <span class="pill">CICLO: 20260310_12</span>
+  <button onclick="setMode('single')">SINGLE</button>
+  <button onclick="setMode('dual')">DUAL</button>
+  <button onclick="prevImg()">◀</button>
+  <button onclick="nextImg()">▶</button>
+  <button onclick="togglePlay()">▶ Play</button>
+  <span style="font-size:12px;">Velocidad:</span>
+  <input type="range" min="200" max="1200" step="100" value="700" id="speed" oninput="changeSpeed(this.value)">
+  <span id="speedLabel" style="font-size:11px;">700 ms</span>
+</div>
+
+<div class="viewer">
+  <div class="status" id="status"></div>
+  <img id="mainImg" src="" alt="mapa">
+</div>
+
+<script>
+const SINGLE = ["SINGLE_000.png", "SINGLE_001.png", "SINGLE_002.png", "SINGLE_003.png", "SINGLE_004.png", "SINGLE_005.png", "SINGLE_006.png", "SINGLE_007.png", "SINGLE_008.png", "SINGLE_009.png", "SINGLE_010.png", "SINGLE_011.png", "SINGLE_012.png", "SINGLE_013.png", "SINGLE_014.png", "SINGLE_015.png", "SINGLE_016.png", "SINGLE_017.png", "SINGLE_018.png", "SINGLE_019.png", "SINGLE_020.png", "SINGLE_021.png", "SINGLE_022.png", "SINGLE_023.png", "SINGLE_024.png"];
+const DUAL   = [];
+
+let mode = (SINGLE.length > 0) ? 'single' : 'dual';
+let idx = 8;
+let timer = null;
+let speed = 700;
+
+function currentList() {
+  return mode === 'single' ? SINGLE : DUAL;
+}
+
+function clampIndex() {
+  const arr = currentList();
+  if (arr.length === 0) {
+    idx = 0;
+    return;
+  }
+  if (idx < 0) idx = 0;
+  if (idx >= arr.length) idx = arr.length - 1;
+}
+
+function render() {
+  const arr = currentList();
+  const img = document.getElementById('mainImg');
+  const status = document.getElementById('status');
+
+  if (arr.length === 0) {
+    img.removeAttribute('src');
+    status.textContent = 'No hay imágenes para modo ' + mode.toUpperCase();
+    return;
+  }
+
+  clampIndex();
+  img.src = arr[idx];
+  status.textContent = mode.toUpperCase() + ' ' + (idx + 1) + '/' + arr.length + ' — ' + arr[idx];
+}
+
+function setMode(newMode) {
+  mode = newMode;
+  clampIndex();
+  render();
+}
+
+function nextImg() {
+  const arr = currentList();
+  if (arr.length === 0) return;
+  idx = (idx + 1) % arr.length;
+  render();
+}
+
+function prevImg() {
+  const arr = currentList();
+  if (arr.length === 0) return;
+  idx = (idx - 1 + arr.length) % arr.length;
+  render();
+}
+
+function togglePlay() {
+  const btn = event.target;
+  if (timer) {
+    clearInterval(timer);
+    timer = null;
+    btn.textContent = '▶ Play';
+  } else {
+    timer = setInterval(nextImg, speed);
+    btn.textContent = '⏸ Pause';
+  }
+}
+
+function changeSpeed(val) {
+  speed = parseInt(val);
+  document.getElementById('speedLabel').textContent = speed + ' ms';
+  if (timer) {
+    clearInterval(timer);
+    timer = setInterval(nextImg, speed);
+  }
+}
+
+render();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,124 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Visor Trombas</title>
+
+<style>
+body {
+font-family: Arial;
+background:#f4f6f8;
+display:flex;
+flex-direction:column;
+align-items:center;
+}
+
+.wrapper {
+width:1100px;
+}
+
+.top {
+display:flex;
+justify-content:center;
+gap:10px;
+flex-wrap:wrap;
+margin:15px;
+}
+
+button {
+padding:10px 16px;
+font-size:15px;
+border-radius:10px;
+border:1px solid #ccc;
+background:white;
+cursor:pointer;
+}
+
+.viewer img {
+width:100%;
+max-width:1100px;
+border-radius:14px;
+box-shadow:0 5px 15px rgba(0,0,0,0.15);
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="wrapper">
+
+<div class="top">
+
+<button onclick="setMode('single')">SINGLE</button>
+<button onclick="setMode('dual')">DUAL</button>
+
+<button onclick="prev()">◀</button>
+<button onclick="next()">▶</button>
+
+<button onclick="toggle()">PLAY / STOP</button>
+
+</div>
+
+<div class="viewer">
+<img id="img">
+</div>
+
+</div>
+
+<script>
+
+const data = {"single": ["SINGLE_000.png", "SINGLE_001.png", "SINGLE_002.png", "SINGLE_003.png", "SINGLE_004.png", "SINGLE_005.png", "SINGLE_006.png", "SINGLE_007.png", "SINGLE_008.png", "SINGLE_009.png", "SINGLE_010.png", "SINGLE_011.png", "SINGLE_012.png", "SINGLE_013.png", "SINGLE_014.png", "SINGLE_015.png", "SINGLE_016.png", "SINGLE_017.png", "SINGLE_018.png", "SINGLE_019.png", "SINGLE_020.png", "SINGLE_021.png", "SINGLE_022.png", "SINGLE_023.png", "SINGLE_024.png"], "dual": ["DUAL_000.png", "DUAL_001.png", "DUAL_002.png", "DUAL_003.png", "DUAL_004.png", "DUAL_005.png", "DUAL_006.png", "DUAL_007.png", "DUAL_008.png", "DUAL_009.png", "DUAL_010.png", "DUAL_011.png", "DUAL_012.png", "DUAL_013.png", "DUAL_014.png", "DUAL_015.png", "DUAL_016.png", "DUAL_017.png", "DUAL_018.png", "DUAL_019.png", "DUAL_020.png", "DUAL_021.png", "DUAL_022.png", "DUAL_023.png", "DUAL_024.png"]}
+
+let mode = "single"
+let i = 0
+let timer = null
+
+function list(){
+return mode==="dual" ? data.dual : data.single
+}
+
+function folder(){
+return mode==="dual" ? "../DUAL/" : "../SINGLE/"
+}
+
+function render(){
+let L = list()
+if(L.length==0)return
+document.getElementById("img").src = folder()+L[i]
+}
+
+function next(){
+let L=list()
+i=(i+1)%L.length
+render()
+}
+
+function prev(){
+let L=list()
+i=(i-1+L.length)%L.length
+render()
+}
+
+function setMode(m){
+mode=m
+i=0
+render()
+}
+
+function toggle(){
+if(timer){
+clearInterval(timer)
+timer=null
+}else{
+timer=setInterval(next,700)
+}
+}
+
+render()
+toggle()
+
+</script>
+
+</body>
+</html>

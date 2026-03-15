@@ -1,0 +1,90 @@
+
+<html>
+<head>
+<title>Pronostico Trombas</title>
+<style>
+body{font-family:Arial;text-align:center;background:#f5f5f5}
+img{max-width:1000px}
+button{padding:8px;margin:5px}
+</style>
+</head>
+<body>
+
+<h2>PRONOSTICO DE PROBABILIDAD DE TROMBAS</h2>
+
+<img id="img">
+
+<br><br>
+
+<button onclick="prev()">◀</button>
+<button onclick="play()">PLAY</button>
+<button onclick="next()">▶</button>
+
+<script>
+
+let imgs = [
+"QR TROMBAS.png",
+"SINGLE_000.png",
+"SINGLE_001.png",
+"SINGLE_002.png",
+"SINGLE_003.png",
+"SINGLE_004.png",
+"SINGLE_005.png",
+"SINGLE_006.png",
+"SINGLE_007.png",
+"SINGLE_008.png",
+"SINGLE_009.png",
+"SINGLE_010.png",
+"SINGLE_011.png",
+"SINGLE_012.png",
+"SINGLE_013.png",
+"SINGLE_014.png",
+"SINGLE_015.png",
+"SINGLE_016.png",
+"SINGLE_017.png",
+"SINGLE_018.png",
+"SINGLE_019.png",
+"SINGLE_020.png",
+"SINGLE_021.png",
+"SINGLE_022.png",
+"SINGLE_023.png",
+"SINGLE_024.png",
+"yjr6fp4d-qr.png",
+
+]
+
+let i = 0
+let timer = null
+
+function show(){
+document.getElementById("img").src = imgs[i]
+}
+
+function next(){
+i=(i+1)%imgs.length
+show()
+}
+
+function prev(){
+i=(i-1+imgs.length)%imgs.length
+show()
+}
+
+function play(){
+
+if(timer){
+clearInterval(timer)
+timer=null
+return
+}
+
+timer=setInterval(next,800)
+
+}
+
+show()
+
+</script>
+
+</body>
+</html>

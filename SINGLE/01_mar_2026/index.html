@@ -1,0 +1,36 @@
+<html>
+<body style="background:black;text-align:center;font-family:Arial">
+
+<h1 style="color:white;">PRONOSTICO DE PROBABILIDAD DE TROMBAS</h1>
+
+<button onclick="cambiar(-1)">◀</button>
+<button onclick="play()">▶</button>
+<button onclick="cambiar(1)">▶▶</button>
+
+<br><br>
+
+<img id="img" src="SINGLE_000.png" width="650">
+
+<script>
+let n=0
+let auto=null
+
+function cambiar(x){
+n+=x
+if(n<0)n=0
+if(n>24)n=24
+document.getElementById("img").src="SINGLE_"+String(n).padStart(3,'0')+".png"
+}
+
+function play(){
+if(auto){clearInterval(auto);auto=null;return}
+auto=setInterval(()=>{
+n++
+if(n>24)n=0
+document.getElementById("img").src="SINGLE_"+String(n).padStart(3,'0')+".png"
+},700)
+}
+</script>
+
+</body>
+</html>

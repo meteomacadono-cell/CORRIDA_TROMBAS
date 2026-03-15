@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Visor Trombas — 20260301_12</title>
+
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    background:#f4f6f8;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+  }
+
+  .wrapper {
+    width: 1100px;
+    max-width: 95vw;
+  }
+
+  .top {
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:12px;
+    flex-wrap:wrap;
+    margin:15px 0;
+  }
+
+  button {
+    padding:10px 18px;
+    font-size:15px;
+    cursor:pointer;
+    border-radius:12px;
+    border:1px solid #cfcfcf;
+    background:white;
+    transition:0.2s;
+  }
+
+  button:hover { background:#e9f2ff; }
+  button:disabled { opacity:0.4; cursor:not-allowed; }
+
+  .pill {
+    padding:8px 14px;
+    background:#eaeaea;
+    border-radius:999px;
+    font-size:14px;
+  }
+
+  .viewer {
+    display:flex;
+    justify-content:center;
+    margin-bottom: 18px;
+  }
+
+  img {
+    width:100%;
+    max-width:1100px;
+    height:auto;
+    border-radius:16px;
+    box-shadow:0 6px 18px rgba(0,0,0,0.15);
+    border:1px solid #ddd;
+    background:white;
+  }
+
+  input[type=range] {
+    width:260px;
+    height:6px;
+  }
+
+  hr {
+    width:100%;
+    border:none;
+    border-top:1px solid #ddd;
+    margin:10px 0 20px 0;
+  }
+</style>
+</head>
+
+<body>
+<div class="wrapper">
+
+<div class="top">
+  <div class="pill"><b>CICLO:</b> 20260301_12</div>
+
+  <button onclick="setMode('single')" id="btnSingle">SINGLE</button>
+  <button onclick="setMode('dual')" id="btnDual">DUAL</button>
+
+  <button onclick="prev()">◀</button>
+  <button onclick="next()">▶</button>
+
+  <button onclick="togglePlay()" id="btnPlay">▶ Play</button>
+
+  <div class="pill">
+    Velocidad:
+    <input id="speed" type="range" min="200" max="2000" step="100" value="700" />
+    <span id="speedTxt">700 ms</span>
+  </div>
+
+  <div class="pill" id="info"></div>
+</div>
+
+<hr/>
+
+<div class="viewer">
+  <img id="img" src="" alt="mapa"/>
+</div>
+
+<script>
+const data = {"ciclo": "20260301_12", "single": ["SINGLE_000.png", "SINGLE_001.png", "SINGLE_002.png", "SINGLE_003.png", "SINGLE_004.png", "SINGLE_005.png", "SINGLE_006.png", "SINGLE_007.png", "SINGLE_008.png", "SINGLE_009.png", "SINGLE_010.png", "SINGLE_011.png", "SINGLE_012.png", "SINGLE_013.png", "SINGLE_014.png", "SINGLE_015.png", "SINGLE_016.png", "SINGLE_017.png", "SINGLE_018.png", "SINGLE_019.png", "SINGLE_020.png", "SINGLE_021.png", "SINGLE_022.png", "SINGLE_023.png", "SINGLE_024.png"], "dual": ["DUAL_000.png", "DUAL_001.png", "DUAL_002.png", "DUAL_003.png", "DUAL_004.png", "DUAL_005.png", "DUAL_006.png", "DUAL_007.png", "DUAL_008.png", "DUAL_009.png", "DUAL_010.png", "DUAL_011.png", "DUAL_012.png", "DUAL_013.png", "DUAL_014.png", "DUAL_015.png", "DUAL_016.png", "DUAL_017.png", "DUAL_018.png", "DUAL_019.png", "DUAL_020.png", "DUAL_021.png", "DUAL_022.png", "DUAL_023.png", "DUAL_024.png"]};
+let mode = "single";
+let idx = 0;
+let timer = null;
+
+function hasDual() {
+  return data.dual && data.dual.length > 0;
+}
+function list() {
+  return mode === "dual" ? data.dual : data.single;
+}
+function folder() {
+  return mode === "dual" ? "DUAL" : "SINGLE";
+}
+function clampIdx() {
+  const L = list();
+  idx = Math.max(0, Math.min(idx, (L?.length || 1) - 1));
+}
+function render() {
+  const L = list();
+  if (!L || L.length === 0) {
+    document.getElementById("img").src = "";
+    document.getElementById("info").textContent = "SIN IMÁGENES";
+    return;
+  }
+  clampIdx();
+  const file = L[idx];
+  document.getElementById("img").src = folder() + "/" + file;
+  document.getElementById("info").textContent =
+    mode.toUpperCase() + "  " + (idx+1) + "/" + L.length + "  —  " + file;
+}
+
+function setMode(m) {
+  if (m === "dual" && !hasDual()) return;
+  mode = m;
+  idx = 0;
+  render();
+}
+
+function prev() { idx -= 1; render(); }
+function next() {
+  idx += 1;
+  const L = list();
+  if (L && idx >= L.length) idx = 0; // loop
+  render();
+}
+
+function stopPlay() {
+  if (timer) {
+    clearInterval(timer);
+    timer = null;
+  }
+  document.getElementById("btnPlay").textContent = "▶ Play";
+}
+
+function startPlay() {
+  stopPlay();
+  const ms = parseInt(document.getElementById("speed").value, 10) || 700;
+  timer = setInterval(() => next(), ms);
+  document.getElementById("btnPlay").textContent = "⏸ Pausa";
+}
+
+function togglePlay() {
+  if (timer) stopPlay();
+  else startPlay();
+}
+
+document.getElementById("speed").addEventListener("input", (e) => {
+  const ms = parseInt(e.target.value, 10);
+  document.getElementById("speedTxt").textContent = ms + " ms";
+  if (timer) startPlay(); // aplica velocidad al vuelo
+});
+
+document.getElementById("btnDual").disabled = !hasDual();
+
+render();
+</script>
+
+</div>
+</body>
+</html>
